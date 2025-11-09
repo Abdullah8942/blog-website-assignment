@@ -33,6 +33,22 @@ if os.environ.get('RAILWAY_STATIC_URL'):
 if os.environ.get('VERCEL_URL'):
     ALLOWED_HOSTS.extend(['.vercel.app', '.now.sh'])
 
+# CSRF Trusted Origins - Required for Railway deployment
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+if os.environ.get('RAILWAY_STATIC_URL'):
+    CSRF_TRUSTED_ORIGINS.extend([
+        'https://*.railway.app',
+        'https://*.up.railway.app',
+    ])
+if os.environ.get('VERCEL_URL'):
+    CSRF_TRUSTED_ORIGINS.extend([
+        'https://*.vercel.app',
+        'https://*.now.sh',
+    ])
+
 
 # Application definition
 
