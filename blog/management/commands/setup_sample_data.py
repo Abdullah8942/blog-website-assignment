@@ -2,11 +2,39 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from blog.models import Category, Tag, Post
 from accounts.models import Profile
+from django.core.files.base import ContentFile
 import sys
+import requests
+import io
+from PIL import Image
 
 
 class Command(BaseCommand):
     help = 'Setup sample data for the blog'
+
+    def download_image(self, url, filename):
+        """Download an image from URL and return ContentFile"""
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                img = Image.open(io.BytesIO(response.content))
+                # Convert to RGB if necessary (for PNG with transparency)
+                if img.mode in ('RGBA', 'LA', 'P'):
+                    background = Image.new('RGB', img.size, (255, 255, 255))
+                    if img.mode == 'P':
+                        img = img.convert('RGBA')
+                    background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                    img = background
+                
+                # Save to BytesIO
+                img_io = io.BytesIO()
+                img.save(img_io, format='JPEG', quality=85)
+                img_io.seek(0)
+                return ContentFile(img_io.read(), name=filename)
+        except Exception as e:
+            sys.stderr.write(f'⚠️  Error downloading image {url}: {str(e)}\n')
+            sys.stderr.flush()
+        return None
 
     def handle(self, *args, **kwargs):
         sys.stderr.write('='*60 + '\n')
@@ -134,6 +162,7 @@ class Command(BaseCommand):
                 'category': categories[0],  # Technology
                 'tags': [tags[0], tags[1], tags[2], tags[3]],  # Python, Django, Web Development, Tutorial
                 'status': 'published',
+                'image_url': 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop',  # Computer/coding
             },
             {
                 'title': '10 Productivity Tips for Remote Workers',
@@ -142,6 +171,7 @@ class Command(BaseCommand):
                 'category': categories[1],  # Lifestyle
                 'tags': [tags[4], tags[5]],  # Tips, Guide
                 'status': 'published',
+                'image_url': 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=600&fit=crop',  # Workspace
             },
             {
                 'title': 'Top 5 Hidden Gems in Europe',
@@ -150,6 +180,7 @@ class Command(BaseCommand):
                 'category': categories[2],  # Travel
                 'tags': [tags[5], tags[4]],  # Guide, Tips
                 'status': 'published',
+                'image_url': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop',  # Travel/Europe
             },
             {
                 'title': 'Healthy Meal Prep Ideas for Busy Professionals',
@@ -158,6 +189,7 @@ class Command(BaseCommand):
                 'category': categories[3],  # Food
                 'tags': [tags[4], tags[5], tags[6]],  # Tips, Guide, Beginner
                 'status': 'published',
+                'image_url': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&h=600&fit=crop',  # Food/meal prep
             },
             {
                 'title': 'Understanding Mental Health: A Beginner\'s Guide',
@@ -166,6 +198,7 @@ class Command(BaseCommand):
                 'category': categories[4],  # Health
                 'tags': [tags[5], tags[6]],  # Guide, Beginner
                 'status': 'published',
+                'image_url': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=600&fit=crop',  # Health/wellness
             },
         ]
         
@@ -190,6 +223,8 @@ class Command(BaseCommand):
         
         for post_data in sample_posts:
             tags_list = post_data.pop('tags')
+            image_url = post_data.pop('image_url', None)
+            
             post, created = Post.objects.get_or_create(
                 title=post_data['title'],
                 defaults={
@@ -200,6 +235,25 @@ class Command(BaseCommand):
             if created:
                 post.tags.set(tags_list)
                 post.views = __import__('random').randint(10, 500)
+                
+                # Download and attach image
+                if image_url:
+                    sys.stderr.write(f'📥 Downloading image for: {post.title}...\n')
+                    sys.stderr.flush()
+                    
+                    image_file = self.download_image(
+                        image_url, 
+                        f'post_{post.slug}.jpg'
+                    )
+                    if image_file:
+                        post.featured_image.save(
+                            f'post_{post.slug}.jpg',
+                            image_file,
+                            save=True
+                        )
+                        sys.stderr.write(f'✅ Image attached to: {post.title}\n')
+                        sys.stderr.flush()
+                
                 post.save()
                 msg = f'✅ Created post: {post.title}'
                 sys.stderr.write(msg + '\n')
