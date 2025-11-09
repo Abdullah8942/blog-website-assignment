@@ -27,27 +27,18 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-z)$p=58hao6xd)@zc855p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-if os.environ.get('RAILWAY_STATIC_URL'):
-    ALLOWED_HOSTS.extend(['.railway.app', '.up.railway.app'])
-if os.environ.get('VERCEL_URL'):
-    ALLOWED_HOSTS.extend(['.vercel.app', '.now.sh'])
+ALLOWED_HOSTS = ['*']  # Allow all hosts for Railway deployment
+# More restrictive approach if needed:
+# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,*.railway.app,*.up.railway.app').split(',')
 
 # CSRF Trusted Origins - Required for Railway deployment
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+    'https://blog-website-assignment-production.up.railway.app',
 ]
-if os.environ.get('RAILWAY_STATIC_URL'):
-    CSRF_TRUSTED_ORIGINS.extend([
-        'https://*.railway.app',
-        'https://*.up.railway.app',
-    ])
-if os.environ.get('VERCEL_URL'):
-    CSRF_TRUSTED_ORIGINS.extend([
-        'https://*.vercel.app',
-        'https://*.now.sh',
-    ])
 
 
 # Application definition

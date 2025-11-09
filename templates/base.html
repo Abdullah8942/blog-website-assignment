@@ -3,170 +3,529 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TechPulse{% endblock %}</title>
+    <title>{% block title %}Blog App{% endblock %}</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome 6.5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Modern Stack -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', 'Inter', sans-serif;
+            font-weight: 700;
+            color: #000000;
+            letter-spacing: -0.5px;
+        }
+        
+        p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #4b5563;
+        }
+        
+        /* Header & Navigation - Modern MacBook Style */
+        nav {
+            background-color: #ffffff;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        
+        nav a {
+            color: #374151;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        nav a:hover {
+            color: #000000;
+        }
+        
+        .nav-brand {
+            font-size: 20px;
+            font-weight: 800;
+            color: #000000;
+            text-transform: capitalize;
+            letter-spacing: -0.5px;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .nav-brand i {
+            color: #000000;
+            margin-right: 8px;
+        }
+        
+        .btn-primary {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1f2937;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: #000000;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #000000;
+        }
+        
+        /* Category Badge */
+        .category-badge {
+            background-color: #f3f4f6;
+            color: #000000;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .category-badge:hover {
+            background-color: #000000;
+            color: #ffffff;
+            border-color: #000000;
+        }
+        
+        /* Tag Badge */
+        .tag-badge {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .tag-badge:hover {
+            background-color: #000000;
+            color: #ffffff;
+            border-color: #000000;
+        }
+        
+        /* Card Styles - Modern */
+        .post-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .post-card:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+        
+        .post-card img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .post-card:hover img {
+            opacity: 0.95;
+        }
+        
+        .post-card-content {
+            padding: 24px;
+            flex-grow: 1;
+        }
+        
+        .post-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .post-card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .post-card-title a {
+            color: #000000;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .post-card-title a:hover {
+            color: #6b7280;
+        }
+        
+        .post-card-excerpt {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        
+        .post-card-footer {
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .read-more {
+            color: #000000;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .read-more:hover {
+            color: #6b7280;
+            transform: translateX(4px);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            color: #000000;
+            padding: 100px 0;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .hero-title {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 40px;
+            font-weight: 400;
+            line-height: 1.8;
+        }
+        
+        /* Search Form */
+        .search-form {
+            display: flex;
+            gap: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-form input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: 'Inter', sans-serif;
         }
         
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .search-form input::placeholder {
+            color: #9ca3af;
         }
         
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .search-form input:focus {
+            outline: none;
+            background-color: #ffffff;
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
         }
         
-        .card-gradient {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        .search-form button {
+            padding: 14px 28px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
         }
         
-        .hover-gradient {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hover-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .hover-gradient:hover::before {
-            left: 100%;
-        }
-        
-        .btn-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-gradient:hover {
+        .search-form button:hover {
+            background-color: #1f2937;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
-        .category-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Section Titles */
+        .section-title {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            color: #000000;
+            position: relative;
+            padding-bottom: 0;
+            font-family: 'Playfair Display', serif;
         }
         
-        .tag-badge {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        .section-title i {
+            color: #000000;
+            margin-right: 12px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #000000;
+            color: #ffffff;
+            border-top: 1px solid #1f2937;
+        }
+        
+        footer h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        footer a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+        }
+        
+        footer a:hover {
+            color: #ffffff;
+        }
+        
+        footer ul li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .social-links a {
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #1f2937;
+            border-radius: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #d1d5db;
+        }
+        
+        .social-links a:hover {
+            background-color: #ffffff;
+            color: #000000;
+            transform: translateY(-4px);
         }
         
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 10px;
+            height: 10px;
         }
         
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #f3f4f6;
         }
         
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #d1d5db;
             border-radius: 5px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: #764ba2;
+            background: #9ca3af;
+        }
+        
+        /* Utility Classes */
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .divider {
+            border-bottom: 1px solid #e5e7eb;
+            margin: 16px 0;
+        }
+        
+        .text-muted {
+            color: #9ca3af;
+        }
+        
+        /* Messages */
+        .alert {
+            border-radius: 6px;
+            padding: 16px 20px;
+            border-left-width: 4px;
+            font-size: 14px;
+        }
+        
+        /* Smooth transitions */
+        button, a {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
     
     {% block extra_css %}{% endblock %}
 </head>
-<body class="bg-gray-50">
+<body>
     <!-- Navigation -->
-    <nav class="gradient-bg shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <a href="{% url 'blog:home' %}" class="text-2xl font-bold text-white flex items-center">
-                    <i class="fas fa-bolt mr-2"></i>
-                    TechPulse
+    <nav>
+        <div class="container-custom">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <a href="{% url 'blog:home' %}" class="nav-brand flex items-center hover:opacity-80 transition">
+                    <i class="fas fa-feather text-lg"></i>
+                    <span>Stories</span>
                 </a>
                 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="{% url 'blog:home' %}" class="text-white hover:text-gray-200 transition-colors duration-200">
-                        <i class="fas fa-home mr-1"></i> Home
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="{% url 'blog:home' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 transition flex items-center">
+                        <i class="fas fa-home text-sm mr-2"></i> Home
                     </a>
                     
                     {% if user.is_authenticated %}
                         {% if user.profile.is_author %}
-                            <a href="{% url 'accounts:dashboard' %}" class="text-white hover:text-gray-200 transition-colors duration-200">
-                                <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                            <a href="{% url 'accounts:dashboard' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 transition flex items-center">
+                                <i class="fas fa-gauge text-sm mr-2"></i> Dashboard
                             </a>
-                            <a href="{% url 'blog:create_post' %}" class="text-white hover:text-gray-200 transition-colors duration-200">
-                                <i class="fas fa-plus-circle mr-1"></i> New Post
+                            <a href="{% url 'blog:create_post' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 transition flex items-center">
+                                <i class="fas fa-pen-nib text-sm mr-2"></i> Write
                             </a>
                         {% endif %}
-                        <a href="{% url 'accounts:profile' %}" class="text-white hover:text-gray-200 transition-colors duration-200">
-                            <i class="fas fa-user mr-1"></i> Profile
+                        <a href="{% url 'accounts:profile' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <i class="fas fa-user text-sm mr-2"></i> Profile
                         </a>
-                        <a href="{% url 'accounts:logout' %}" class="text-white hover:text-gray-200 transition-colors duration-200">
-                            <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                        <a href="{% url 'accounts:logout' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <i class="fas fa-sign-out-alt text-sm mr-2"></i> Logout
                         </a>
                     {% else %}
-                        <a href="{% url 'accounts:login' %}" class="text-white hover:text-gray-200 transition-colors duration-200">
-                            <i class="fas fa-sign-in-alt mr-1"></i> Login
+                        <a href="{% url 'accounts:login' %}" class="btn-secondary ml-2">
+                            <i class="fas fa-sign-in-alt text-sm mr-2"></i> Sign In
                         </a>
-                        <a href="{% url 'accounts:register' %}" class="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 font-semibold">
-                            <i class="fas fa-user-plus mr-1"></i> Register
+                        <a href="{% url 'accounts:register' %}" class="btn-primary ml-2">
+                            <i class="fas fa-user-plus text-sm mr-2"></i> Join
                         </a>
                     {% endif %}
                 </div>
                 
                 <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none">
-                    <i class="fas fa-bars text-2xl"></i>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
             
             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
-                <a href="{% url 'blog:home' %}" class="block text-white hover:text-gray-200 py-2 transition-colors duration-200">
-                    <i class="fas fa-home mr-1"></i> Home
+            <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-gray-100">
+                <a href="{% url 'blog:home' %}" class="block px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                    <i class="fas fa-home text-sm mr-2"></i> Home
                 </a>
                 
                 {% if user.is_authenticated %}
                     {% if user.profile.is_author %}
-                        <a href="{% url 'accounts:dashboard' %}" class="block text-white hover:text-gray-200 py-2 transition-colors duration-200">
-                            <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
+                        <a href="{% url 'accounts:dashboard' %}" class="block px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <i class="fas fa-gauge text-sm mr-2"></i> Dashboard
                         </a>
-                        <a href="{% url 'blog:create_post' %}" class="block text-white hover:text-gray-200 py-2 transition-colors duration-200">
-                            <i class="fas fa-plus-circle mr-1"></i> New Post
+                        <a href="{% url 'blog:create_post' %}" class="block px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <i class="fas fa-pen-nib text-sm mr-2"></i> Write
                         </a>
                     {% endif %}
-                    <a href="{% url 'accounts:profile' %}" class="block text-white hover:text-gray-200 py-2 transition-colors duration-200">
-                        <i class="fas fa-user mr-1"></i> Profile
+                    <a href="{% url 'accounts:profile' %}" class="block px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                        <i class="fas fa-user text-sm mr-2"></i> Profile
                     </a>
-                    <a href="{% url 'accounts:logout' %}" class="block text-white hover:text-gray-200 py-2 transition-colors duration-200">
-                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    <a href="{% url 'accounts:logout' %}" class="block px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                        <i class="fas fa-sign-out-alt text-sm mr-2"></i> Logout
                     </a>
                 {% else %}
-                    <a href="{% url 'accounts:login' %}" class="block text-white hover:text-gray-200 py-2 transition-colors duration-200">
-                        <i class="fas fa-sign-in-alt mr-1"></i> Login
+                    <a href="{% url 'accounts:login' %}" class="block px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                        <i class="fas fa-sign-in-alt text-sm mr-2"></i> Sign In
                     </a>
-                    <a href="{% url 'accounts:register' %}" class="block text-white hover:text-gray-200 py-2 transition-colors duration-200">
-                        <i class="fas fa-user-plus mr-1"></i> Register
+                    <a href="{% url 'accounts:register' %}" class="block px-4 py-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                        <i class="fas fa-user-plus text-sm mr-2"></i> Join
                     </a>
                 {% endif %}
             </div>
@@ -175,10 +534,13 @@
     
     <!-- Messages -->
     {% if messages %}
-        <div class="container mx-auto px-4 mt-4">
+        <div class="container-custom mt-6">
             {% for message in messages %}
-                <div class="bg-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% elif message.tags == 'warning' %}yellow{% else %}blue{% endif %}-100 border-l-4 border-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% elif message.tags == 'warning' %}yellow{% else %}blue{% endif %}-500 text-{% if message.tags == 'error' %}red{% elif message.tags == 'success' %}green{% elif message.tags == 'warning' %}yellow{% else %}blue{% endif %}-700 p-4 mb-4 rounded-lg shadow-md" role="alert">
-                    <p class="font-medium">{{ message }}</p>
+                <div class="alert {% if message.tags == 'error' %}bg-red-50 border-red-400 text-red-800{% elif message.tags == 'success' %}bg-green-50 border-green-400 text-green-800{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-400 text-yellow-800{% else %}bg-blue-50 border-blue-400 text-blue-800{% endif %}" role="alert">
+                    <div class="flex items-center">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'success' %}fa-check-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3"></i>
+                        <p>{{ message }}</p>
+                    </div>
                 </div>
             {% endfor %}
         </div>
@@ -190,45 +552,73 @@
     </main>
     
     <!-- Footer -->
-    <footer class="gradient-bg text-white mt-16">
-        <div class="container mx-auto px-4 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer class="mt-24">
+        <div class="container-custom py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <!-- Brand -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4">
-                        <i class="fas fa-bolt mr-2"></i>
-                        TechPulse
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fas fa-feather mr-2"></i>Stories
                     </h3>
-                    <p class="text-gray-200">
-                        A modern blog platform built with Django featuring rich content management, user authentication, and beautiful UI.
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        A modern, beautifully designed blog platform to share your stories, insights, and creativity with the world.
                     </p>
                 </div>
                 
+                <!-- Quick Links -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <h3 class="text-base font-bold mb-4">Navigate</h3>
                     <ul class="space-y-2">
-                        <li><a href="{% url 'blog:home' %}" class="text-gray-200 hover:text-white transition-colors duration-200">Home</a></li>
+                        <li><a href="{% url 'blog:home' %}" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Home</a></li>
                         {% if user.is_authenticated %}
-                            <li><a href="{% url 'accounts:profile' %}" class="text-gray-200 hover:text-white transition-colors duration-200">Profile</a></li>
+                            <li><a href="{% url 'accounts:profile' %}" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Profile</a></li>
+                            {% if user.profile.is_author %}
+                                <li><a href="{% url 'accounts:dashboard' %}" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Dashboard</a></li>
+                                <li><a href="{% url 'blog:create_post' %}" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Write</a></li>
+                            {% endif %}
                         {% else %}
-                            <li><a href="{% url 'accounts:login' %}" class="text-gray-200 hover:text-white transition-colors duration-200">Login</a></li>
-                            <li><a href="{% url 'accounts:register' %}" class="text-gray-200 hover:text-white transition-colors duration-200">Register</a></li>
+                            <li><a href="{% url 'accounts:login' %}" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Sign In</a></li>
+                            <li><a href="{% url 'accounts:register' %}" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Join</a></li>
                         {% endif %}
                     </ul>
                 </div>
                 
+                <!-- Resources -->
                 <div>
-                    <h3 class="text-xl font-bold mb-4">Connect</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-2xl hover:text-gray-200 transition-colors duration-200"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-2xl hover:text-gray-200 transition-colors duration-200"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-2xl hover:text-gray-200 transition-colors duration-200"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-2xl hover:text-gray-200 transition-colors duration-200"><i class="fab fa-linkedin"></i></a>
+                    <h3 class="text-base font-bold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Documentation</a></li>
+                        <li><a href="#" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Support</a></li>
+                        <li><a href="#" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>FAQ</a></li>
+                        <li><a href="#" class="text-sm flex items-center"><i class="fas fa-chevron-right mr-2 text-xs"></i>Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Follow -->
+                <div>
+                    <h3 class="text-base font-bold mb-4">Follow Us</h3>
+                    <p class="text-gray-400 text-sm mb-4">Join our community</p>
+                    <div class="social-links">
+                        <a href="#" title="X (Twitter)" class="text-sm"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#" title="Facebook" class="text-sm"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" title="Instagram" class="text-sm"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="LinkedIn" class="text-sm"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
             </div>
             
-            <div class="border-t border-purple-400 mt-8 pt-8 text-center">
-                <p>&copy; 2025 TechPulse. All rights reserved.</p>
+            <!-- Footer Bottom -->
+            <div class="border-t border-gray-800 pt-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <p class="text-gray-400 text-sm">
+                        &copy; 2025 Stories Blog. All rights reserved.
+                    </p>
+                    <div class="flex gap-6 text-sm">
+                        <a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">Cookies</a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
