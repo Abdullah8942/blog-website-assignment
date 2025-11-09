@@ -2,12 +2,18 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from blog.models import Category, Tag, Post
 from accounts.models import Profile
+import sys
 
 
 class Command(BaseCommand):
     help = 'Setup sample data for the blog'
 
     def handle(self, *args, **kwargs):
+        sys.stderr.write('='*60 + '\n')
+        sys.stderr.write('STARTING SAMPLE DATA SETUP\n')
+        sys.stderr.write('='*60 + '\n')
+        sys.stderr.flush()
+        
         self.stdout.write(self.style.SUCCESS('Setting up sample data...'))
         
         # Create categories
@@ -42,14 +48,22 @@ class Command(BaseCommand):
         
         # Update admin user profile to be admin role
         try:
-            admin_user = User.objects.get(username='admin')
-            admin_profile = admin_user.profile
-            admin_profile.role = 'admin'
-            admin_profile.bio = 'Administrator of the Advanced Blog platform'
-            admin_profile.save()
-            self.stdout.write(self.style.SUCCESS('✓ Admin profile updated'))
-        except User.DoesNotExist:
-            self.stdout.write(self.style.WARNING('! Admin user not found. Please create one with: python manage.py createsuperuser'))
+            admin_user = User.objects.filter(is_superuser=True).first()
+            if not admin_user:
+                admin_user = User.objects.filter(username='zohaib').first()
+            if not admin_user:
+                admin_user = User.objects.filter(username='admin').first()
+            
+            if admin_user:
+                admin_profile = admin_user.profile
+                admin_profile.role = 'admin'
+                admin_profile.bio = 'Administrator of the Advanced Blog platform'
+                admin_profile.save()
+                self.stdout.write(self.style.SUCCESS(f'✓ Admin profile updated for {admin_user.username}'))
+            else:
+                self.stdout.write(self.style.WARNING('! No admin user found'))
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'! Error updating admin profile: {str(e)}'))
         
         # Create sample author user
         author_user, created = User.objects.get_or_create(
@@ -128,11 +142,24 @@ class Command(BaseCommand):
             },
         ]
         
-        # Get the author (use admin if author1 doesn't exist with profile)
+        # Get the author (use zohaib, admin, or author1)
         try:
-            post_author = User.objects.get(username='author1')
-        except:
-            post_author = User.objects.get(username='admin')
+            post_author = User.objects.filter(username='zohaib').first()
+            if not post_author:
+                post_author = User.objects.filter(username='admin').first()
+            if not post_author:
+                post_author = User.objects.filter(username='author1').first()
+            if not post_author:
+                post_author = User.objects.filter(is_superuser=True).first()
+            
+            if not post_author:
+                self.stdout.write(self.style.ERROR('! No user found to create posts'))
+                return
+                
+            self.stdout.write(self.style.SUCCESS(f'Using {post_author.username} as post author'))
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'Error finding author: {str(e)}'))
+            return
         
         for post_data in sample_posts:
             tags_list = post_data.pop('tags')
@@ -147,10 +174,26 @@ class Command(BaseCommand):
                 post.tags.set(tags_list)
                 post.views = __import__('random').randint(10, 500)
                 post.save()
-                self.stdout.write(f'Created post: {post.title}')
+                msg = f'✅ Created post: {post.title}'
+                sys.stderr.write(msg + '\n')
+                sys.stderr.flush()
+                self.stdout.write(self.style.SUCCESS(msg))
+            else:
+                msg = f'⚠️  Post already exists: {post.title}'
+                sys.stderr.write(msg + '\n')
+                sys.stderr.flush()
+                self.stdout.write(self.style.WARNING(msg))
+        
+        total_posts = Post.objects.count()
+        sys.stderr.write('\n' + '='*60 + '\n')
+        sys.stderr.write(f'✅ SAMPLE DATA SETUP COMPLETE!\n')
+        sys.stderr.write(f'Total posts in database: {total_posts}\n')
+        sys.stderr.write('='*60 + '\n\n')
+        sys.stderr.flush()
         
         self.stdout.write(self.style.SUCCESS('\n✓ Sample data setup complete!'))
+        self.stdout.write(self.style.SUCCESS(f'Total posts: {total_posts}'))
         self.stdout.write(self.style.SUCCESS('\nYou can now login with:'))
-        self.stdout.write('  Admin: admin / (your password)')
+        self.stdout.write('  Admin: zohaib / zohaib123')
         self.stdout.write('  Author: author1 / author123')
         self.stdout.write('  Reader: reader1 / reader123')
